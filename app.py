@@ -16,35 +16,57 @@ from core.demo import demo, raw_demo
 from core.imports import ALIASES, REQUIRED, csv_bytes, read_csv_bytes, suggest_mapping, validate
 from core.storage import STATUSES, attach_reviews, connect, save_review
 
-st.set_page_config(page_title='CRM-контроль · Mindbox', page_icon='🟢', layout='wide')
+st.set_page_config(page_title='CRM-контроль · Mindbox', page_icon='📊', layout='wide')
 TODAY = datetime.now(ZoneInfo('Europe/Moscow')).date()
 ROOT = Path(__file__).parent
 
 st.markdown('''<style>
-@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap');
-html,body,[class*="css"], .stApp {font-family:Manrope,-apple-system,BlinkMacSystemFont,sans-serif;}
-.stApp {background:#f7f9f8;color:#173a2e;}
-.block-container {padding-top:2.5rem;max-width:1440px;padding-bottom:3rem;}
-h1 {font-size:2.5rem!important;letter-spacing:-1.2px;font-weight:800!important;}
-h2 {font-size:1.45rem!important;letter-spacing:-.4px;}
-h3 {font-size:1.12rem!important;}
-[data-testid="stSidebar"] {background:#102f27;}
-[data-testid="stSidebar"] * {color:#e4eee8;}
-[data-testid="stSidebar"] [data-baseweb="select"] * {color:#173a2e;}
-[data-testid="stSidebar"] [data-baseweb="input"] input {color:#173a2e;}
-[data-testid="stSidebar"] button p {color:#173a2e!important;}
-[data-testid="stSidebar"] [data-testid="stDateInput"] input {color:#173a2e!important;}
-[data-testid="stSidebar"] hr {border-color:#36534a;}
-[data-testid="stMetric"] {background:white;border:1px solid #e2e9e4;border-radius:14px;padding:20px 22px;}
-[data-testid="stMetricValue"] {font-size:2.2rem;font-weight:700;}
-.eyebrow {font-size:12px;font-weight:800;letter-spacing:2px;color:#58816d;margin-bottom:10px;}
-.brand {font-size:25px;font-weight:800;letter-spacing:-.7px;margin-bottom:4px;}
-.brand-note {font-size:12px;color:#9cb8ab!important;margin-bottom:25px;line-height:1.6;}
-.subtle {color:#6c7e74;font-size:15px;line-height:1.65;margin-top:-8px;margin-bottom:25px;}
-div[data-testid="stVerticalBlockBorderWrapper"] {background:white;border-radius:14px;}
-.stButton button,.stDownloadButton button {border-radius:9px;font-weight:600;}
-.stTabs [data-baseweb="tab"] {font-size:15px;}
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;600;700&display=swap');
+html,body,.stApp,.stApp p,.stApp label,.stApp input,.stApp button {font-family:Roboto,Arial,sans-serif;}
+.stApp {background:#fff;color:#30343b;}
+.block-container {padding-top:3.8rem;max-width:1600px;padding-bottom:3rem;}
+h1 {font-size:1.95rem!important;letter-spacing:-.45px;font-weight:500!important;color:#30343b!important;}
+h2 {font-size:1.4rem!important;font-weight:500!important;}
+h3 {font-size:1.05rem!important;font-weight:500!important;color:#30343b!important;}
+[data-testid="stSidebar"] {background:#fff;border-right:1px solid #dce3e7;min-width:326px;max-width:326px;}
+[data-testid="stSidebar"]::before {content:"";position:absolute;left:0;top:0;bottom:0;width:52px;background:#282b31;}
+[data-testid="stSidebar"]::after {content:"m";position:absolute;left:9px;top:28px;width:34px;height:34px;border-radius:50%;background:#009b77;color:white;text-align:center;font-size:28px;font-weight:600;line-height:33px;}
+[data-testid="stSidebarContent"] {padding-left:52px;}
+[data-testid="stSidebarContent"] > div:last-child {padding-top:1.5rem;}
+[data-testid="stSidebar"] [data-testid="stRadio"] label {width:100%!important;box-sizing:border-box;}
+[data-testid="stSidebar"] [data-testid="stDateInput"] input {font-size:13px;}
+[data-testid="stSidebarUserContent"] {padding:1.75rem 1rem 1rem;}
+[data-testid="stSidebar"] p,[data-testid="stSidebar"] label {color:#64727c;}
+[data-testid="stSidebar"] hr {border-color:#e5e9ec;margin:1.3rem 0;}
+[data-testid="stSidebar"] [data-testid="stRadio"] label {padding:9px 12px;border-radius:5px;margin:0 0 3px;transition:background .15s;}
+[data-testid="stSidebar"] [data-testid="stRadio"] label:hover {background:#f4f7f8;}
+[data-testid="stSidebar"] [data-testid="stRadio"] label:has(input:checked) {background:#eaf8f1;}
+[data-testid="stSidebar"] [data-testid="stRadio"] label:has(input:checked) p {color:#168565;font-weight:500;}
+[data-testid="stSidebar"] [data-testid="stRadio"] label > div:first-child {display:none;}
+[data-testid="stSidebar"] [data-testid="stRadio"] label p {font-size:15px;}
+[data-testid="stSidebar"] button p {color:#45535b;}
+[data-testid="stSidebar"] [data-testid="stCaptionContainer"] p {font-size:12px;line-height:1.5;}
+[data-testid="stMetric"] {background:#fff;border:1px solid #dce3e7;border-bottom:3px solid #009b77;border-radius:5px;padding:18px 20px;}
+[data-testid="stMetricLabel"] p {font-size:14px;color:#71808a;}
+[data-testid="stMetricValue"] {font-size:2rem;font-weight:400;color:#30343b;}
+[data-testid="stDataFrame"] {border:1px solid #dce3e7;border-radius:5px;}
+[data-baseweb="select"] > div,[data-baseweb="input"],[data-baseweb="textarea"] {background:#fff!important;border-color:#c9d4dc!important;border-radius:5px!important;}
+[data-testid="stDateInput"] > div {background:white;border:1px solid #c9d4dc;border-radius:5px;}
+[data-testid="stCaptionContainer"] p {color:#7c8992;}
+.eyebrow {font-size:13px;font-weight:400;letter-spacing:0;color:#84929a;margin-bottom:12px;}
+.brand {font-size:25px;font-weight:600;letter-spacing:-.8px;color:#30343b;margin-bottom:4px;}
+.brand-note {font-size:12px;color:#829097;margin-bottom:24px;line-height:1.5;}
+.subtle {color:#74818b;font-size:14px;line-height:1.6;margin-top:-6px;margin-bottom:22px;}
+.demo-banner {font-size:13px;color:#6e7167;background:#faf9f3;border:1px solid #eeeadc;border-radius:5px;padding:12px 16px;margin:0 0 20px;line-height:1.5;}
+.demo-banner strong {font-weight:500;color:#575d55;margin-right:8px;}
+.stButton button,.stDownloadButton button,.stLinkButton a {border-radius:5px;font-weight:400;border-color:#c9d4dc;min-height:38px;}
+.stButton button[kind="primary"],button[data-testid="stBaseButton-primary"] {background:#009b77;border-color:#009b77;color:#fff;}
+.stButton button:hover,.stDownloadButton button:hover {border-color:#009b77;color:#008465;}
+div[data-testid="stVerticalBlockBorderWrapper"] {border-radius:5px;}
+[data-testid="stForm"] {border-color:#dce3e7!important;border-radius:5px!important;background:#fafbfc;}
+.stTabs [data-baseweb="tab"] {font-size:14px;}
 footer {visibility:hidden;}
+@media(max-width:900px) { [data-testid="stSidebar"] {min-width:260px;max-width:260px;} .block-container {padding:1.4rem 1rem;} h1 {font-size:1.6rem!important;} }
 </style>''', unsafe_allow_html=True)
 
 
@@ -71,7 +93,7 @@ data = st.session_state.data
 db = st.session_state.db
 
 with st.sidebar:
-    st.markdown('<div class="brand">● CRM-контроль</div><div class="brand-note">Мониторинг рассылок Mindbox<br>Учебный проект на Python</div>', unsafe_allow_html=True)
+    st.markdown('<div class="brand">mindbox</div><div class="brand-note">CRM-контроль<br>Аналитика рассылок</div>', unsafe_allow_html=True)
     page = st.radio('Рабочее пространство', ['Обзор', 'Сигналы', 'Данные', 'Правила', 'О проекте'], label_visibility='collapsed')
     st.divider()
     st.caption('ПРОЕКТ')
@@ -120,11 +142,11 @@ counts = metrics(data)
 
 
 def header(title, subtitle):
-    st.markdown('<div class="eyebrow">M I N D B O X  /  CRM-КОНТРОЛЬ</div>', unsafe_allow_html=True)
+    st.markdown('<div class="eyebrow">Аналитика / Рассылки / Контроль отклонений</div>', unsafe_allow_html=True)
     st.title(title)
     st.markdown(f'<div class="subtle">{subtitle}</div>', unsafe_allow_html=True)
     if st.session_state.mode.startswith('demo'):
-        st.info('ДЕМО · Все рассылки и показатели синтетические. Приложение не подключено к клиентскому проекту Mindbox.', icon='🧪')
+        st.markdown('<div class="demo-banner"><strong>Демонстрационные данные</strong> Синтетические рассылки и показатели. Подключение к клиентскому проекту Mindbox отсутствует.</div>', unsafe_allow_html=True)
 
 
 def display_signals(frame):
@@ -145,21 +167,21 @@ def graph(key, metric='delivery_rate', signal=None):
         baseline.append(float(hist[metric].median()) if len(hist)>=settings.min_history else None)
     fig=go.Figure()
     fig.add_trace(go.Scatter(x=series['date'], y=series[metric], name='Фактическое значение',
-                             line=dict(color='#16775c',width=3),mode='lines+markers',marker=dict(size=5)))
+                             line=dict(color='#6554bd',width=2),mode='lines+markers',marker=dict(size=5)))
     if metric == 'unsubscribe_rate':
         fig.add_hline(y=settings.unsubscribe_rate_pct,line_dash='dash',line_color='#b77941',annotation_text='Порог отписок')
     else:
         fig.add_trace(go.Scatter(x=series['date'],y=baseline,name='Медиана предыдущих дней',
-                                 line=dict(color='#a6b5ad',width=2,dash='dash'),connectgaps=False))
+                                 line=dict(color='#b9c7cd',width=1.5,dash='dash'),connectgaps=False))
     if signal is not None:
         fig.add_trace(go.Scatter(x=[signal['date']],y=[signal['value']],mode='markers',
                                 marker=dict(color='#d9684b',size=13),name='Сигнал'))
     fig.update_layout(height=330, margin=dict(l=10,r=20,t=25,b=10), paper_bgcolor='rgba(0,0,0,0)',
-                      plot_bgcolor='rgba(0,0,0,0)',font=dict(family='Manrope, sans-serif',color='#425c4e'),
+                      plot_bgcolor='rgba(0,0,0,0)',font=dict(family='Roboto, Arial, sans-serif',color='#6d7b85',size=12),
                       legend=dict(orientation='h',y=1.16,x=0),yaxis_title=names[metric],xaxis_title=None,
                       hovermode='x unified')
     fig.update_xaxes(showgrid=False)
-    fig.update_yaxes(gridcolor='#e7eee9',rangemode='tozero')
+    fig.update_yaxes(gridcolor='#e4eaee',griddash='dot',rangemode='tozero')
     st.plotly_chart(fig, width='stretch')
 
 
@@ -208,9 +230,9 @@ if page == 'Обзор':
 elif page == 'Сигналы':
     header('Очередь сигналов', 'Проверьте отклонение, разберитесь с причиной в Mindbox и зафиксируйте результат.')
     a,b,c=st.columns(3)
-    selected_types=a.multiselect('Тип сигнала',list(RULES.values()),key='type_filter')
-    selected_status=b.multiselect('Статус',list(STATUSES),key='status_filter')
-    selected_campaign=c.multiselect('Рассылка',sorted(signals['campaign_name'].unique()),key='campaign_filter')
+    selected_types=a.multiselect('Тип сигнала',list(RULES.values()),key='type_filter',placeholder='Все типы')
+    selected_status=b.multiselect('Статус',list(STATUSES),key='status_filter',placeholder='Все статусы')
+    selected_campaign=c.multiselect('Рассылка',sorted(signals['campaign_name'].unique()),key='campaign_filter',placeholder='Все рассылки')
     filtered=signals.copy()
     for col,selected in [('type',selected_types),('status',selected_status),('campaign_name',selected_campaign)]:
         if selected:
