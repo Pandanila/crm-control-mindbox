@@ -191,7 +191,7 @@ if page == 'Обзор':
     a.metric('Рассылки', data['campaign_key'].nunique())
     b.metric('Сигналы', len(signals))
     c.metric('Открытые', int((signals['status']!='Проверен').sum()))
-    d.metric('Затронуты', signals['campaign_key'].nunique())
+    d.metric('Рассылки с отклонениями', signals['campaign_key'].nunique())
     st.caption(f'Проверка: {start:%d.%m.%Y} — {end:%d.%m.%Y}. Реакции учитываются с возраста {settings.reaction_age_days} дн. Часовой пояс: Москва.')
     left,right=st.columns([2,1],gap='large')
     with left:
